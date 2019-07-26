@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<Project 
+	scene="corridor/corridorS.xml" 
+	behavior="corridor/corridorB.xml" 
+	view="corridor/corridorV.xml"
+	model="pedvo"
+	dumpPath="images/tradeshow"
+/>
+
+	
+   
+

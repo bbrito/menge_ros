@@ -38,6 +38,8 @@ set -x
 ./menge -p ../examples/core/stadium.xml
 ./menge -p ../examples/core/swap.xml
 ./menge -p ../examples/core/event.xml
+./menge -p ../examples/core/corridor.xml
+./menge -p ../examples/core/intersection.xml
 
 ./menge -p ../examples/plugin/propertyX.xml
 ./menge -p ../examples/plugin/terrain.xml
@@ -52,3 +54,4 @@ set -x
 ./menge -p ../examples/plugin/formationChange.xml
 ./menge -p ../examples/plugin/formationNavigation.xml
 ./menge -p ../examples/plugin/fundDiag.xml
+
