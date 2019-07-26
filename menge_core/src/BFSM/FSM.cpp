@@ -3,7 +3,7 @@
 License
 
 Menge
-Copyright © and trademark ™ 2012-14 University of North Carolina at Chapel Hill. 
+Copyright ï¿½ and trademark ï¿½ 2012-14 University of North Carolina at Chapel Hill. 
 All rights reserved.
 
 Permission to use, copy, modify, and distribute this software and its documentation 
@@ -49,7 +49,7 @@ Any questions or comments should be sent to the authors {menge,geom}@cs.unc.edu
 
 #include "BaseAgent.h"
 #include "SimulatorInterface.h"
-
+#include <tf2_ros/transform_broadcaster.h>
 namespace Menge {
 
 	namespace BFSM {
@@ -145,7 +145,7 @@ namespace Menge {
    			ROS_INFO("I heard: y :[%f]", msg.angular.y);
    			ROS_INFO("I heard: z :[%f]", msg.angular.z);
 
-			float speed = msg.linear.x;
+			float speed = sqrt(pow(msg.linear.x,2) + pow(msg.linear.y,2));
 			if(speed == 0) speed = 0.0001;
 
 			prefVelMsg.setSpeed(speed);
@@ -172,7 +172,7 @@ namespace Menge {
 			}
 			if(agent->_isExternal){
 				//std::cout << "External Agent detected : " << ID << std::endl;
-				prefVelMsg.setSpeed(0.0);
+				//prefVelMsg.setSpeed(0.0);
 				ros::spinOnce();
 				newVel = prefVelMsg;
 				//std::cout << (newVel.getPreferred()).x() << " : " << (newVel.getPreferred()).y() << std::endl;
@@ -514,21 +514,32 @@ namespace Menge {
 					//std::cout <<"pos:" << agt->_pos._x << " " << agt->_pos._y << std::endl;
 					//std::cout <<"vel:" << agt->_vel._x << " " << agt->_vel._y << std::endl;
 					//std::cout <<"orient:" << agt->_orient._x << " " << agt->_orient._y << std::endl;
-						
-					tf::TransformBroadcaster broadcaster1;
+					geometry_msgs::TransformStamped transformStamped;
+					//tf::TransformBroadcaster broadcaster1;
 					tf::TransformBroadcaster broadcaster2;
+					tf2_ros::TransformBroadcaster br;
+					//broadcaster1.sendTransform(
+      				//		tf::StampedTransform(
+        			//		tf::Transform(tf::createIdentityQuaternion(), tf::Vector3(0.0, 0.0, 0.0)),
+        			//		ros::Time::now(),"map", "pose"));
 
-					broadcaster1.sendTransform(
-      						tf::StampedTransform(
-        					tf::Transform(tf::createIdentityQuaternion(), tf::Vector3(0.0, 0.0, 0.0)),
-        					ros::Time::now() + ros::Duration(0),"map", "pose"));
-					broadcaster2.sendTransform(
-      						tf::StampedTransform(
-        					tf::Transform(tf::createQuaternionFromRPY(0.0, 0.0, robot_angle), 
-						tf::Vector3(pose.position.x, pose.position.y, 0.0)),
-        					ros::Time::now() + ros::Duration(0),"pose", "base_scan"));
+					transformStamped.header.stamp = ros::Time::now();
+					transformStamped.header.frame_id = "map";
+					transformStamped.child_frame_id = "base_scan";
+					transformStamped.transform.translation.x = pose.position.x;
+					transformStamped.transform.translation.y = pose.position.y;
+					transformStamped.transform.translation.z = 0.0;
+					tf2::Quaternion q;
+					q.setRPY(0, 0, robot_angle);
+					transformStamped.transform.rotation.x = q.x();
+					transformStamped.transform.rotation.y = q.y();
+					transformStamped.transform.rotation.z = q.z();
+					transformStamped.transform.rotation.w = q.w();
 
-					//std::cout << "Robot position : (" << pose.position.x << "," << pose.position.y << ")" << std::endl;  
+					br.sendTransform(transformStamped);
+
+
+					std::cout << "Robot position : (" << pose.position.x << "," << pose.position.y << ")" << std::endl;
 					//std::cout << "Robot orientation : (" << agt->_orient._x << "," << agt->_orient._y << ")" << std::endl;  
 
 					poseStamped.header.stamp = ros::Time::now();
@@ -552,7 +563,7 @@ namespace Menge {
 				Agents::BaseAgent * agt = this->_sim->getAgent( a );
 				Vector2 agent_pos = agt->_pos;
 				Vector2 agent_orient = agt->_orient;
-				if(_sim->queryVisibility(agent_pos,robot_pos, 0.1) and !agt->_isExternal){
+				if(_sim->queryVisibility(agent_pos,robot_pos, 0.01) and !agt->_isExternal){
 					double dx = agent_pos._x - robot_pos._x;
 					double dy = agent_pos._y - robot_pos._y;
 					double distance = sqrt((dx * dx) + (dy * dy));
@@ -581,8 +592,20 @@ namespace Menge {
 						pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, 0.0, atan2(agt->_orient._y, agt->_orient._x));
 						crowd.poses.push_back(pose);
 					}
+					/*geometry_msgs::Pose pose;
+					pose.position.x = agent_pos._x;
+					pose.position.y = agent_pos._y;
+					pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, 0.0, atan2(agt->_orient._y, agt->_orient._x));
+					crowd.poses.push_back(pose);*/
 				}
+				/*geometry_msgs::Pose pose;
+			    pose.position.x = agent_pos._x;
+			    pose.position.y = agent_pos._y;
+			    pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, 0.0, atan2(agt->_orient._y, agt->_orient._x));
+			    crowd.poses.push_back(pose);*/
 			}
+			
+			
 
 			crowd.header.stamp = current_time;
 			crowd.header.frame_id = "map";

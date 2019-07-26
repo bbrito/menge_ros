@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<Project 
+	scene="tradeshow/testingS.xml" 
+	behavior="tradeshow/testingB.xml" 
+	view="tradeshow/testingV.xml" 
+	model="orca"
+	dumpPath="images/tradeshow"
+/>

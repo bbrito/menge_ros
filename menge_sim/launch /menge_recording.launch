@@ -1,0 +1,8 @@
+<launch>
+<node
+pkg="rosbag"
+name="record_crowd"
+type="record"
+args="-o /home/sukrit/workspace/src/menge_ros/rosbag/menge_trajectory.bag /crowd_pose"
+/>
+</launch>

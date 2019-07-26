@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -84,7 +85,7 @@ list(REMOVE_DUPLICATES Foo_INCLUDE_DIRS)
 catkin_package(
   INCLUDE_DIRS ${Foo_INCLUDE_DIRS}
   LIBRARIES menge 
-  CATKIN_DEPENDS cmake_modules roscpp rospy std_msgs tf
+  CATKIN_DEPENDS cmake_modules roscpp rospy std_msgs tf tf2_ros
   DEPENDS OpenMP SDL SDL_ttf SDL_image OpenGL PNG TinyXML
 )
 

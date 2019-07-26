@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<Project 
+	scene="intersection/intersectionS.xml" 
+	behavior="intersection/intersectionB.xml" 
+	view="intersection/intersectionV.xml" 
+	model="pedvo"
+	dumpPath="images/tradeshow"
+/>
+
+
